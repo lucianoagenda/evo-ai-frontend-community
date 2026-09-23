@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAccountUsers } from '@/hooks/useAccountUsers';
 import {
@@ -38,6 +39,8 @@ import {
   CheckSquare,
   Clock,
   Save,
+  MessageSquare,
+  ClipboardList,
 } from 'lucide-react';
 import { PipelineItem, PipelineStage, Pipeline, PipelineTask, CreateTaskData, UpdateTaskData, PipelineServiceDefinition } from '@/types/analytics';
 import pipelineServiceDefinitionsService from '@/services/pipelines/pipelineServiceDefinitionsService';
@@ -47,6 +50,22 @@ import PipelineItemCustomAttributes from './PipelineItemCustomAttributes';
 import PipelineTasksList, { PipelineTasksListRef } from './tasks/PipelineTasksList';
 import CreateTaskModal from './tasks/CreateTaskModal';
 import EditTaskModal from './tasks/EditTaskModal';
+import StartConversationModal from '@/components/contacts/StartConversationModal';
+import type { Contact } from '@/types/contacts';
+
+// [Traggi] Transforma URLs do texto em links clicáveis.
+function renderComLinks(texto: string) {
+  const partes = texto.split(/(https?:\/\/[^\s]+)/g);
+  return partes.map((parte, i) =>
+    /^https?:\/\//.test(parte) ? (
+      <a key={i} href={parte} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">
+        {parte}
+      </a>
+    ) : (
+      <span key={i}>{parte}</span>
+    ),
+  );
+}
 
 interface Service {
   name: string;
@@ -93,6 +112,14 @@ export default function EditItemModal({
   const [activeTab, setActiveTab] = useState<TabKey>('details');
   const [catalogServices, setCatalogServices] = useState<PipelineServiceDefinition[]>([]);
   const [openServicePopover, setOpenServicePopover] = useState<number | null>(null);
+
+  // [Traggi] Ficha do cliente e atalhos de conversa
+  const navigate = useNavigate();
+  const [showStartConversation, setShowStartConversation] = useState(false);
+  const resumoCliente =
+    typeof item?.custom_fields?.resumo_cliente === 'string' ? (item.custom_fields.resumo_cliente as string) : '';
+  const conversaUuid = item?.conversation?.uuid;
+  const contatoDoCard = item?.contact ?? item?.conversation?.contact;
 
   // Task modals state
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
@@ -320,6 +347,36 @@ export default function EditItemModal({
               {/* Details */}
               <TabsContent value="details" className="mt-0">
                 <div className={cn(sectionCard, 'space-y-5')}>
+                  {/* [Traggi] Resumo do cliente + atalhos de conversa */}
+                  {(resumoCliente || conversaUuid || contatoDoCard?.id) && (
+                    <>
+                      <div className="grid gap-2">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <Label className="text-[12.5px] font-bold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                            <ClipboardList className="w-3.5 h-3.5" />
+                            Resumo do cliente
+                          </Label>
+                          {conversaUuid ? (
+                            <Button type="button" size="sm" variant="outline" onClick={() => navigate(`/conversations/${conversaUuid}`)}>
+                              <MessageSquare className="w-4 h-4 mr-1.5" />
+                              Abrir conversa
+                            </Button>
+                          ) : contatoDoCard?.id ? (
+                            <Button type="button" size="sm" variant="outline" onClick={() => setShowStartConversation(true)}>
+                              <MessageSquare className="w-4 h-4 mr-1.5" />
+                              Iniciar conversa
+                            </Button>
+                          ) : null}
+                        </div>
+                        {resumoCliente && (
+                          <div className="rounded-lg border border-border/70 bg-muted/40 p-3 text-[13px] leading-relaxed whitespace-pre-wrap break-words max-h-[380px] overflow-y-auto">
+                            {renderComLinks(resumoCliente)}
+                          </div>
+                        )}
+                      </div>
+                      <div className="h-px bg-border/70" />
+                    </>
+                  )}
                   <div className="grid gap-2">
                     <Label className="text-[12.5px] font-bold uppercase tracking-wide text-muted-foreground">
                       {t('editItem.currentStage')}
@@ -569,6 +626,14 @@ export default function EditItemModal({
         loading={taskLoading}
         availableUsers={users}
       />
+      {/* [Traggi] Iniciar conversa com o contato do card */}
+      {showStartConversation && contatoDoCard?.id && (
+        <StartConversationModal
+          open={showStartConversation}
+          onOpenChange={setShowStartConversation}
+          contact={contatoDoCard as unknown as Contact}
+        />
+      )}
     </Dialog>
   );
 }

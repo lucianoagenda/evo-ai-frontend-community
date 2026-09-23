@@ -1388,6 +1388,13 @@ export default function PipelineKanban() {
                             </div>
                           </div>
 
+                          {/* [Traggi] Resumo curto do cliente na face do card */}
+                          {typeof item.custom_fields?.resumo_card === 'string' && item.custom_fields.resumo_card && (
+                            <div className="mb-2.5 rounded-lg border border-border/60 bg-muted/40 px-2.5 py-2 text-[12px] leading-snug text-foreground/85 whitespace-pre-line">
+                              {item.custom_fields.resumo_card as string}
+                            </div>
+                          )}
+
                           {/* Message preview */}
                           {item.conversation?.last_non_activity_message?.content && (
                             <div className="mb-2.5 p-2.5 bg-muted/50 rounded-lg">
