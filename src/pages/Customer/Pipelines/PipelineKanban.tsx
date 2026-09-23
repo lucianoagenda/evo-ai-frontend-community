@@ -65,6 +65,8 @@ import ReorderStagesModal from '@/components/pipelines/ReorderStagesModal';
 import PipelineCaptureFormsModal from '@/components/pipelines/PipelineCaptureFormsModal';
 import PipelinePurchaseWebhookModal from '@/components/pipelines/PipelinePurchaseWebhookModal';
 import { ScheduleActionModal } from '@/components/scheduledActions';
+import StartConversationModal from '@/components/contacts/StartConversationModal';
+import type { Contact } from '@/types/contacts';
 
 // Status/priority badge styles use the design system's semantic Tailwind classes
 // (same palette Chat/Contacts use), with dark-mode variants — NOT arbitrary hex.
@@ -170,6 +172,8 @@ export default function PipelineKanban() {
   const [isRemovingItem, setIsRemovingItem] = useState(false);
   const [showEditItemModal, setShowEditItemModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<PipelineItem | null>(null);
+  // [Traggi] contato para o modal "Iniciar conversa" direto do card
+  const [contatoParaConversa, setContatoParaConversa] = useState<PipelineItem['contact'] | null>(null);
   const [isEditingItem, setIsEditingItem] = useState(false);
   const [showEditStageModal, setShowEditStageModal] = useState(false);
   const [showDeleteStageModal, setShowDeleteStageModal] = useState(false);
@@ -1388,10 +1392,37 @@ export default function PipelineKanban() {
                             </div>
                           </div>
 
-                          {/* [Traggi] Resumo curto do cliente na face do card */}
+                          {/* [Traggi] Resumo curto do cliente + atalho de conversa na face do card */}
                           {typeof item.custom_fields?.resumo_card === 'string' && item.custom_fields.resumo_card && (
                             <div className="mb-2.5 rounded-lg border border-border/60 bg-muted/40 px-2.5 py-2 text-[12px] leading-snug text-foreground/85 whitespace-pre-line">
                               {item.custom_fields.resumo_card as string}
+                            </div>
+                          )}
+                          {(item.conversation?.uuid || item.contact?.id) && (
+                            <div className="mb-2.5" onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
+                              {item.conversation?.uuid ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 w-full text-[12px]"
+                                  onClick={() => navigate(`/conversations/${item.conversation!.uuid}`)}
+                                >
+                                  <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
+                                  Abrir conversa
+                                </Button>
+                              ) : (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 w-full text-[12px]"
+                                  onClick={() => setContatoParaConversa(item.contact ?? null)}
+                                >
+                                  <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
+                                  Iniciar conversa
+                                </Button>
+                              )}
                             </div>
                           )}
 
@@ -1624,6 +1655,14 @@ export default function PipelineKanban() {
         loading={isReorderingStages}
       />
 
+      {/* [Traggi] Iniciar conversa a partir do card */}
+      {contatoParaConversa?.id && (
+        <StartConversationModal
+          open={!!contatoParaConversa}
+          onOpenChange={aberto => { if (!aberto) setContatoParaConversa(null); }}
+          contact={contatoParaConversa as unknown as Contact}
+        />
+      )}
       {/* Schedule Action Modal */}
       {selectedConversationForSchedule && scheduleActionContactId && (
         <ScheduleActionModal
