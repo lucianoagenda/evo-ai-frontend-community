@@ -62,6 +62,18 @@ export default defineConfig({
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
     },
+    // [Traggi] Em dev, espelha o proxy do nginx (docker-entrypoint.sh). A chave vem
+    // de TRAGGI_API_KEY no ambiente do shell (sem prefixo VITE_, nunca vai ao bundle).
+    proxy: process.env.TRAGGI_API_KEY
+      ? {
+          '/traggi-api': {
+            target: process.env.TRAGGI_API_URL || 'https://app.traggi.com.br',
+            changeOrigin: true,
+            rewrite: p => p.replace(/^\/traggi-api/, '/api'),
+            headers: { 'Api-Key': process.env.TRAGGI_API_KEY },
+          },
+        }
+      : undefined,
     hmr: {
       // Reduce HMR overhead via ngrok
       overlay: false, // Disable error overlay

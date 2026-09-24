@@ -67,6 +67,7 @@ import PipelinePurchaseWebhookModal from '@/components/pipelines/PipelinePurchas
 import { ScheduleActionModal } from '@/components/scheduledActions';
 import StartConversationModal from '@/components/contacts/StartConversationModal';
 import type { Contact } from '@/types/contacts';
+import { getTraggiUserId, disableTraggiCrmUser } from '@/services/traggi/traggiService';
 
 // Status/priority badge styles use the design system's semantic Tailwind classes
 // (same palette Chat/Contacts use), with dark-mode variants — NOT arbitrary hex.
@@ -651,6 +652,21 @@ export default function PipelineKanban() {
     if (!itemToRemove || !pipelineId) return;
 
     setIsRemovingItem(true);
+
+    // [Traggi] Cards com traggi_id: desativa o usuário no CRM do Traggi antes de
+    // remover. Se o Traggi falhar, o card fica no pipeline para tentar de novo.
+    const traggiUserId = getTraggiUserId(itemToRemove);
+    if (traggiUserId !== null) {
+      try {
+        await disableTraggiCrmUser(traggiUserId);
+      } catch (error) {
+        console.error('Error disabling Traggi CRM user:', error);
+        toast.error('Não foi possível desativar o usuário no Traggi. A oportunidade não foi removida.');
+        setIsRemovingItem(false);
+        return;
+      }
+    }
+
     try {
       await pipelinesService.removeItemFromPipeline(pipelineId, itemToRemove.id);
       toast.success(t('kanban.messages.itemRemoved'));
@@ -1364,10 +1380,21 @@ export default function PipelineKanban() {
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
+                            {/* [Traggi] Excluir oportunidade direto no card (mesmo fluxo do "Remover do pipeline") */}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                              aria-label="Excluir oportunidade"
+                              title="Excluir oportunidade"
+                              onClick={() => handleRemoveItem(item)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
 
                           {/* Contact header */}
-                          <div className="flex items-start gap-3 mb-2.5 pr-14">
+                          <div className="flex items-start gap-3 mb-2.5 pr-20">
                             <div
                               className="w-[34px] h-[34px] shrink-0 rounded-full flex items-center justify-center text-white text-[13px] font-bold shadow-sm"
                               style={{ backgroundColor: getContactColor(item.contact?.name) }}
