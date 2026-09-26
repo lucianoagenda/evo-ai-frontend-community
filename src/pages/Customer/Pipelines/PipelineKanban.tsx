@@ -58,6 +58,7 @@ import CreateStageModal from '@/components/pipelines/CreateStageModal';
 import AddItemModal from '@/components/pipelines/AddItemModal';
 import RemoveItemModal from '@/components/pipelines/RemoveItemModal';
 import EditItemModal from '@/components/pipelines/EditItemModal';
+import MoveItemModal, { type MoveItemTarget } from '@/components/pipelines/MoveItemModal';
 import EditStageModal from '@/components/pipelines/EditStageModal';
 import DeleteStageModal from '@/components/pipelines/DeleteStageModal';
 import DeletePipelineModal from '@/components/pipelines/DeletePipelineModal';
@@ -173,6 +174,8 @@ export default function PipelineKanban() {
   const [isRemovingItem, setIsRemovingItem] = useState(false);
   const [showEditItemModal, setShowEditItemModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<PipelineItem | null>(null);
+  // [Traggi] "Mover para…" entre pipelines
+  const [moveItemTarget, setMoveItemTarget] = useState<PipelineItem | null>(null);
   // [Traggi] contato para o modal "Iniciar conversa" direto do card
   const [contatoParaConversa, setContatoParaConversa] = useState<PipelineItem['contact'] | null>(null);
   const [isEditingItem, setIsEditingItem] = useState(false);
@@ -680,6 +683,18 @@ export default function PipelineKanban() {
     } finally {
       setIsRemovingItem(false);
     }
+  };
+
+  // [Traggi] após "Mover para…": recarrega o quadro; fora do pipeline, oferece link para o destino
+  const handleItemMoved = async (target: MoveItemTarget) => {
+    await loadPipelineData();
+    if (target.samePipeline) {
+      toast.success(t('kanban.messages.itemMoved'));
+      return;
+    }
+    toast.success(t('moveItem.movedTo', { pipeline: target.pipelineName }), {
+      action: { label: t('moveItem.viewPipeline'), onClick: () => navigate(`/pipelines/${target.pipelineId}`) },
+    });
   };
 
   const handleEditItem = (item: PipelineItem) => {
@@ -1316,8 +1331,8 @@ export default function PipelineKanban() {
                             className="absolute top-2 right-2 flex items-center gap-0.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                             onClick={e => e.stopPropagation()}
                           >
-                            {moveTargets.length > 0 && (
-                              <DropdownMenu>
+                            {/* [Traggi] sempre visível: permite mover para outro pipeline */}
+                            <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="ghost" size="sm" className="h-auto p-1 text-muted-foreground hover:bg-muted" aria-label={t('kanban.item.moveCard')}>
                                     <ArrowLeftRight className="w-4 h-4" />
@@ -1333,9 +1348,13 @@ export default function PipelineKanban() {
                                       {target.name}
                                     </DropdownMenuItem>
                                   ))}
+                                  {moveTargets.length > 0 && <DropdownMenuSeparator />}
+                                  <DropdownMenuItem onClick={() => setMoveItemTarget(item)}>
+                                    <ArrowLeftRight className="w-4 h-4 mr-2" />
+                                    {t('moveItem.otherPipeline')}
+                                  </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
-                            )}
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="sm" className="h-auto p-1 text-muted-foreground hover:bg-muted">
@@ -1638,8 +1657,21 @@ export default function PipelineKanban() {
             setSelectedConversationForSchedule(it);
             setScheduleActionOpen(true);
           }}
+          onMoveToOtherPipeline={() => {
+            setShowEditItemModal(false);
+            setMoveItemTarget(itemToEdit);
+          }}
         />
       )}
+
+      {/* [Traggi] Mover para outro pipeline */}
+      <MoveItemModal
+        open={!!moveItemTarget}
+        onOpenChange={open => !open && setMoveItemTarget(null)}
+        item={moveItemTarget}
+        currentPipelineId={pipelineId!}
+        onMoved={handleItemMoved}
+      />
 
       {/* Edit Stage Modal */}
       <EditStageModal

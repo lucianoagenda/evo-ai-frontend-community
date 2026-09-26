@@ -88,6 +88,8 @@ interface EditItemModalProps {
   loading: boolean;
   /** Optional: opens the ScheduleActionModal for this item's contact (board wires it). */
   onSchedule?: (item: PipelineItem) => void;
+  /** [Traggi] abre o "Mover para outro pipeline…" */
+  onMoveToOtherPipeline?: () => void;
 }
 
 type TabKey = 'details' | 'services' | 'attributes' | 'tasks';
@@ -101,6 +103,7 @@ export default function EditItemModal({
   onSubmit,
   loading,
   onSchedule,
+  onMoveToOtherPipeline,
 }: EditItemModalProps) {
   const { t } = useLanguage('pipelines');
   const { users } = useAccountUsers();
@@ -396,6 +399,18 @@ export default function EditItemModal({
                         ))}
                       </SelectContent>
                     </Select>
+                    {/* [Traggi] mover para outro pipeline a partir da ficha */}
+                    {onMoveToOtherPipeline && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="px-0 justify-start w-fit"
+                        onClick={onMoveToOtherPipeline}
+                      >
+                        {t('moveItem.moveToOtherPipeline')}
+                      </Button>
+                    )}
                   </div>
 
                   <div className="h-px bg-border/70" />
