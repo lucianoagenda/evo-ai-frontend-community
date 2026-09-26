@@ -16,6 +16,7 @@ import { NoMessages } from '../empty-states';
 import { MessageInput } from '../message-input';
 import TypingIndicator from '../typing-indicator/TypingIndicator';
 import MessageList from '../messages/MessageList';
+import { SendViaBar } from '../switch-inbox';
 import { Banner, ConversationNoteBanner } from '../banner';
 import PendingResponseBanner from '../banner/PendingResponseBanner';
 
@@ -87,7 +88,7 @@ const ChatArea = ({
   isPendingConversation = false,
 }: ChatAreaProps) => {
   const { t } = useLanguage('chat');
-  const { messages, websocket } = useChatContext();
+  const { messages, websocket, conversations } = useChatContext();
 
   // Load moderations for this conversation
   const { pendingResponseModerations, loadModerations, messageModerationsMap } =
@@ -403,6 +404,15 @@ const ChatArea = ({
 
       {/* Message Input - Fixo na parte inferior */}
       <div className="flex-shrink-0 w-full">
+        {/* [Traggi] troca do WhatsApp de saída */}
+        {selectedConversationId && selectedConversation?.inbox_id && (
+          <SendViaBar
+            conversationId={selectedConversationId}
+            currentInboxId={selectedConversation.inbox_id}
+            isWhatsApp={isWhatsAppChannel}
+            onSwitched={updated => conversations.updateConversation(updated)}
+          />
+        )}
         <MessageInput
           onSendMessage={handleSendMessage}
           placeholder={

@@ -41,6 +41,7 @@ import {
   MessageSquare,
   FileText,
   Link2,
+  Smartphone,
 } from 'lucide-react';
 
 import { pipelinesService } from '@/services/pipelines';
@@ -59,6 +60,7 @@ import AddItemModal from '@/components/pipelines/AddItemModal';
 import RemoveItemModal from '@/components/pipelines/RemoveItemModal';
 import EditItemModal from '@/components/pipelines/EditItemModal';
 import MoveItemModal, { type MoveItemTarget } from '@/components/pipelines/MoveItemModal';
+import { SwitchInboxDialog } from '@/components/chat/switch-inbox';
 import EditStageModal from '@/components/pipelines/EditStageModal';
 import DeleteStageModal from '@/components/pipelines/DeleteStageModal';
 import DeletePipelineModal from '@/components/pipelines/DeletePipelineModal';
@@ -148,11 +150,18 @@ export default function PipelineKanban() {
     };
   }, []);
 
-  const { agents, fetchAgents } = useAppDataStore();
+  const { agents, fetchAgents, fetchInboxes } = useAppDataStore();
 
   useEffect(() => {
     fetchAgents();
   }, [fetchAgents]);
+
+  // [Traggi] trocar número de WhatsApp pelo card — a lista de números vem do store de inboxes
+  const { t: tChat } = useLanguage('chat');
+  const [switchInboxItem, setSwitchInboxItem] = useState<PipelineItem | null>(null);
+  useEffect(() => {
+    if (switchInboxItem) fetchInboxes(false).catch(console.error);
+  }, [switchInboxItem, fetchInboxes]);
 
   const [loading, setLoading] = useState(true);
   const [pipeline, setPipeline] = useState<Pipeline | null>(null);
@@ -1374,6 +1383,13 @@ export default function PipelineKanban() {
                                     {t('kanban.item.openConversation')}
                                   </DropdownMenuItem>
                                 )}
+                                {/* [Traggi] trocar o WhatsApp de saída da conversa do card */}
+                                {item.conversation?.inbox?.channel_type === 'Channel::Whatsapp' && (
+                                  <DropdownMenuItem onClick={() => setSwitchInboxItem(item)}>
+                                    <Smartphone className="h-4 w-4 mr-2" />
+                                    {tChat('switchInbox.cardAction')}
+                                  </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem
                                   onClick={async () => {
                                     await navigator.clipboard.writeText(String(item.id));
@@ -1672,6 +1688,20 @@ export default function PipelineKanban() {
         currentPipelineId={pipelineId!}
         onMoved={handleItemMoved}
       />
+
+      {/* [Traggi] Trocar número de WhatsApp da conversa do card */}
+      {switchInboxItem?.conversation && (
+        <SwitchInboxDialog
+          open
+          onOpenChange={open => !open && setSwitchInboxItem(null)}
+          conversationId={switchInboxItem.conversation.id}
+          currentInboxId={switchInboxItem.conversation.inbox?.id ?? ''}
+          onSwitched={() => {
+            setSwitchInboxItem(null);
+            loadPipelineData();
+          }}
+        />
+      )}
 
       {/* Edit Stage Modal */}
       <EditStageModal
