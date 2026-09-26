@@ -1,5 +1,13 @@
 {
   "switchInbox": {
+    "reasons": {
+      "not_whatsapp_conversation": "This conversation is not on WhatsApp.",
+      "target_not_whatsapp": "The chosen number is not a WhatsApp channel.",
+      "same_inbox": "The conversation already uses this number.",
+      "target_disconnected": "The chosen number is disconnected.",
+      "contact_without_phone": "The contact has no phone number.",
+      "target_has_open_conversation": "The contact already has another open conversation on that number. Resolve it before switching."
+    },
     "title": "Change WhatsApp number",
     "sendVia": "Send via:",
     "change": "Change",

@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SwitchInboxDialog from './SwitchInboxDialog';
 import { isInboxUnavailable, whatsappInboxes } from './switchInboxUtils';
 import chatService from '@/services/chat/chatService';
+import { toast } from 'sonner';
 
 vi.mock('@/hooks/useLanguage', () => ({
   useLanguage: () => ({ t: (key: string) => key, currentLanguage: 'pt-BR' }),
@@ -62,5 +63,22 @@ describe('SwitchInboxDialog', () => {
 
     await waitFor(() => expect(chatService.switchInbox).toHaveBeenCalledWith('conv1', 'b'));
     expect(onSwitched).toHaveBeenCalledWith({ id: 'conv1', inbox_id: 'b' });
+  });
+
+  it('explains the refusal reason sent by the backend', async () => {
+    vi.mocked(chatService.switchInbox).mockRejectedValue({
+      response: {
+        status: 422,
+        data: { error: { message: 'Conversation inbox cannot be switched', details: { reason: 'target_has_open_conversation' } } },
+      },
+    });
+    render(
+      <SwitchInboxDialog open onOpenChange={vi.fn()} conversationId="conv1" currentInboxId="a" onSwitched={vi.fn()} />,
+    );
+
+    fireEvent.click(screen.getByTestId('switch-inbox-b'));
+    fireEvent.click(screen.getByTestId('switch-inbox-confirm'));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('switchInbox.reasons.target_has_open_conversation'));
   });
 });

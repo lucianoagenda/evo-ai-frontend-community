@@ -9,6 +9,22 @@ import { apiErrorMessage } from '@/utils/apiHelpers';
 import type { Conversation } from '@/types/chat/api';
 import { isInboxUnavailable, whatsappInboxes } from './switchInboxUtils';
 
+// Motivos de recusa do backend (Conversations::SwitchInboxService::Error#reason) com texto traduzido.
+const KNOWN_REASONS = [
+  'not_whatsapp_conversation',
+  'target_not_whatsapp',
+  'same_inbox',
+  'target_disconnected',
+  'contact_without_phone',
+  'target_has_open_conversation',
+];
+
+const refusalReason = (error: unknown): string | undefined => {
+  const reason = (error as { response?: { data?: { error?: { details?: { reason?: unknown } } } } })?.response?.data
+    ?.error?.details?.reason;
+  return typeof reason === 'string' && KNOWN_REASONS.includes(reason) ? reason : undefined;
+};
+
 interface SwitchInboxDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -45,7 +61,8 @@ export default function SwitchInboxDialog({
       toast.success(t('switchInbox.success', { name: selected?.name }));
       close(false);
     } catch (err) {
-      toast.error(apiErrorMessage(err) || t('switchInbox.error'));
+      const reason = refusalReason(err);
+      toast.error(reason ? t(`switchInbox.reasons.${reason}`) : apiErrorMessage(err) || t('switchInbox.error'));
     } finally {
       setSaving(false);
     }
