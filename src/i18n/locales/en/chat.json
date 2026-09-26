@@ -1,4 +1,22 @@
 {
+  "switchInbox": {
+    "title": "Change WhatsApp number",
+    "sendVia": "Send via:",
+    "change": "Change",
+    "current": "current",
+    "connected": "connected",
+    "disconnected": "disconnected",
+    "confirmText": "Next messages will be sent from {{name}}. History stays in this conversation.",
+    "confirm": "Change number",
+    "back": "Back",
+    "cancel": "Cancel",
+    "success": "Conversation now uses {{name}}",
+    "error": "Could not change the number",
+    "disconnectedBanner": "This number is disconnected.",
+    "disconnectedAction": "Change number",
+    "via": "via {{name}}",
+    "cardAction": "Change WhatsApp number…"
+  },
   "messages": {
     "noPermissionView": "You don't have permission to view conversations",
     "noPermissionSend": "You don't have permission to send messages",

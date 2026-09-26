@@ -1,4 +1,22 @@
 {
+  "switchInbox": {
+    "title": "Trocar número de WhatsApp",
+    "sendVia": "Enviar por:",
+    "change": "Trocar",
+    "current": "atual",
+    "connected": "conectado",
+    "disconnected": "desconectado",
+    "confirmText": "As próximas mensagens sairão por {{name}}. O histórico continua nesta conversa.",
+    "confirm": "Trocar número",
+    "back": "Voltar",
+    "cancel": "Cancelar",
+    "success": "Conversa agora usa {{name}}",
+    "error": "Não foi possível trocar o número",
+    "disconnectedBanner": "Este número está desconectado.",
+    "disconnectedAction": "Trocar número",
+    "via": "via {{name}}",
+    "cardAction": "Trocar número de WhatsApp…"
+  },
   "messages": {
     "noPermissionView": "Você não tem permissão para visualizar conversas",
     "noPermissionSend": "Você não tem permissão para enviar mensagens",

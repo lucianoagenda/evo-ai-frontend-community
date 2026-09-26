@@ -151,6 +151,12 @@ class ChatService {
     return response.data;
   }
 
+  // [Traggi] Troca o WhatsApp de saída da conversa, mantendo o histórico
+  async switchInbox(conversationId: string, inboxId: string): Promise<ConversationResponse> {
+    const response = await api.post(`/conversations/${conversationId}/switch_inbox`, { inbox_id: inboxId });
+    return response.data;
+  }
+
   async updateConversationCustomAttributes(
     conversationId: string,
     customAttributes: Record<string, unknown>,
