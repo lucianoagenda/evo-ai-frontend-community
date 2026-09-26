@@ -357,6 +357,15 @@ export interface MovePipelineItemData {
   to_stage_id: string;
 }
 
+// [Traggi] "Mover para…" entre pipelines
+export interface MoveItemToPipelineData {
+  item_id: string;
+  pipeline_id: string; // pipeline atual do card (URL)
+  target_pipeline_id: string;
+  to_stage_id: string;
+  notes?: string;
+}
+
 // Pipeline Tasks
 export interface PipelineTask {
   id: string;

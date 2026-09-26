@@ -1,5 +1,20 @@
 {
   "title": "Pipelines",
+  "moveItem": {
+    "title": "Mover card",
+    "pipeline": "Pipeline",
+    "stage": "Etapa",
+    "current": "atual",
+    "notes": "Observação (opcional)",
+    "cancel": "Cancelar",
+    "submit": "Mover",
+    "error": "Não foi possível mover o card",
+    "loadError": "Não foi possível carregar os pipelines",
+    "otherPipeline": "Outro pipeline…",
+    "moveToOtherPipeline": "Mover para outro pipeline…",
+    "movedTo": "Card movido para {{pipeline}}",
+    "viewPipeline": "Ver pipeline"
+  },
   "header": {
     "newPipeline": "Criar Pipeline",
     "searchPlaceholder": "Buscar pipelines..."

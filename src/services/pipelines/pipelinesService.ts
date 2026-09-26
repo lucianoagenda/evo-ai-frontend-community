@@ -10,6 +10,7 @@ import type {
   CreateStageData,
   PipelineItem,
   MovePipelineItemData,
+  MoveItemToPipelineData,
   PipelineStage,
   PipelineStats,
   PipelinesResponse,
@@ -174,6 +175,19 @@ class PipelinesService {
       },
     );
     return extractData<{ success: boolean; message: string }>(response);
+  }
+
+  // [Traggi] Move item to a stage of any pipeline (same or another)
+  async moveItemToPipeline(data: MoveItemToPipelineData): Promise<unknown> {
+    const response = await api.patch(
+      `/pipelines/${data.pipeline_id}/pipeline_items/${data.item_id}/move_to_stage`,
+      {
+        new_stage_id: data.to_stage_id,
+        target_pipeline_id: data.target_pipeline_id,
+        notes: data.notes ?? '',
+      },
+    );
+    return extractData<unknown>(response);
   }
 
   // Get available conversations for pipeline

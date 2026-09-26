@@ -1,5 +1,20 @@
 {
   "title": "Pipelines",
+  "moveItem": {
+    "title": "Move card",
+    "pipeline": "Pipeline",
+    "stage": "Stage",
+    "current": "current",
+    "notes": "Note (optional)",
+    "cancel": "Cancel",
+    "submit": "Move",
+    "error": "Could not move the card",
+    "loadError": "Could not load pipelines",
+    "otherPipeline": "Other pipeline…",
+    "moveToOtherPipeline": "Move to another pipeline…",
+    "movedTo": "Card moved to {{pipeline}}",
+    "viewPipeline": "View pipeline"
+  },
   "header": {
     "newPipeline": "Create Pipeline",
     "searchPlaceholder": "Search pipelines..."
