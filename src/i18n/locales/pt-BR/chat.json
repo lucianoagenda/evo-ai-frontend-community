@@ -22,7 +22,7 @@
     "error": "Não foi possível trocar o número",
     "disconnectedBanner": "Este número está desconectado.",
     "disconnectedAction": "Trocar número",
-    "via": "via {{name}}",
+    "via": "pelo número {{name}}",
     "cardAction": "Trocar número de WhatsApp…"
   },
   "messages": {
