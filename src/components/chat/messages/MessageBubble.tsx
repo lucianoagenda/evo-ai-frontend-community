@@ -51,6 +51,7 @@ interface MessageBubbleProps {
   onReply?: (message: Message) => void;
   onCopy?: (message: Message) => void;
   onDelete?: (message: Message) => void;
+  viaInboxName?: string | null; // [Traggi] número por onde a mensagem passou, se diferente do atual
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -71,6 +72,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   onReply,
   onCopy,
   onDelete,
+  viaInboxName,
 }) => {
   const { t } = useLanguage('chat');
   const isTemplate = message.message_type === MESSAGE_TYPE.TEMPLATE;
@@ -386,6 +388,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                 )}
               </div>
 
+              {viaInboxName && (
+                <span className="text-[10px] text-muted-foreground italic" data-testid="message-via-inbox">
+                  {t('switchInbox.via', { name: viaInboxName })}
+                </span>
+              )}
               {showTimestamp && timestampVariant === 'default' && (
                 <MessageStatus message={message} isOwn={false} onRetry={onRetry} variant="default" />
               )}
@@ -547,6 +554,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
               )}
             </div>
 
+            {viaInboxName && (
+              <span className="text-[10px] text-muted-foreground italic" data-testid="message-via-inbox">
+                {t('switchInbox.via', { name: viaInboxName })}
+              </span>
+            )}
             {showTimestamp && timestampVariant === 'default' && (
               <MessageStatus message={message} isOwn={isOwn} onRetry={onRetry} variant="default" />
             )}

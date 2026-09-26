@@ -222,6 +222,7 @@ export interface Message {
     | 'audio'
     | 'video';
   conversation_id: string;
+  inbox_id?: string; // [Traggi] número por onde a mensagem passou
   created_at: string | number; // Suporta Unix timestamp (number) ou ISO string (string)
   sender_type?: 'contact' | 'agent_bot' | 'agent' | 'user';
   external_source_ids: Record<string, unknown>;

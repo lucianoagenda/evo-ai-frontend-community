@@ -13,6 +13,7 @@ import { ChevronDown, Loader2 } from 'lucide-react';
 import MessageBubble from '@/components/chat/messages/MessageBubble';
 import PostPreview from '@/components/chat/messages/PostPreview';
 import SystemMessage from '@/components/chat/messages/SystemMessage';
+import { viaInboxName } from './utils/viaInbox';
 
 import { Message, MESSAGE_TYPE } from '@/types/chat/api';
 
@@ -65,6 +66,8 @@ interface MessageListProps {
   onReplyToMessage: (message: Message) => void;
   onCopyMessage: (message: Message) => void;
   onDeleteMessage: (message: Message) => Promise<void>;
+  currentInboxId?: string; // [Traggi] etiqueta "via <número>"
+  inboxNames?: Map<string, string>; // [Traggi]
 }
 
 // Helper function para normalizar timestamp de mensagens (mesma lógica do MessagesContext)
@@ -122,6 +125,8 @@ const MessageList: React.FC<MessageListProps> = ({
   onReplyToMessage,
   onCopyMessage,
   onDeleteMessage,
+  currentInboxId,
+  inboxNames,
 }) => {
   const { t } = useLanguage('chat');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -649,6 +654,7 @@ const MessageList: React.FC<MessageListProps> = ({
                     onReply={onReplyToMessage}
                     onCopy={onCopyMessage}
                     onDelete={onDeleteMessage}
+                    viaInboxName={inboxNames ? viaInboxName(message.inbox_id, currentInboxId, inboxNames) : null}
                   />
                 </div>
               );

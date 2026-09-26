@@ -179,6 +179,8 @@ const ChatArea = ({
   // Buscar inbox para obter informações do canal (provider)
   const { inboxes, fetchInboxes, isLoadingInboxes } = useAppDataStore();
   const inboxesById = useMemo(() => new Map(inboxes.map(item => [item.id, item])), [inboxes]);
+  // [Traggi] nomes dos números para a etiqueta "via"
+  const inboxNames = useMemo(() => new Map(inboxes.map(item => [item.id, item.name])), [inboxes]);
   const inbox = selectedConversation?.inbox_id
     ? inboxesById.get(selectedConversation.inbox_id) || null
     : null;
@@ -378,6 +380,8 @@ const ChatArea = ({
           )}
 
           <MessageList
+            currentInboxId={selectedConversation?.inbox_id}
+            inboxNames={inboxNames}
             messages={selectedMessages}
             hasMoreMessages={messages.canLoadMore(selectedConversationId)}
             isLoadingMore={messages.isLoadingMore(selectedConversationId)}
