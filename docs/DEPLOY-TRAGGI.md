@@ -83,6 +83,40 @@ Observações:
 - Os botões exibidos vêm do próprio Traggi (campo `acoes`), seguindo as mesmas regras
   das telas do Traggi; cada ação pede confirmação antes de executar.
 
+## Backend: `evocrm_crm` e `evocrm_crm_sidekiq` sempre na mesma versão
+
+O web (`evocrm_crm`) e o Sidekiq (`evocrm_crm_sidekiq`) rodam o mesmo código do
+backend (`ghcr.io/lucianoagenda/evo-crm-backend-traggi`). Use **sempre a mesma tag
+(SHA) nos dois**; com versões diferentes, os jobs em segundo plano podem rodar código
+diferente do da API.
+
+```yaml
+  evocrm_crm:
+    image: 'ghcr.io/lucianoagenda/evo-crm-backend-traggi:<sha-do-backend>'
+  evocrm_crm_sidekiq:
+    image: 'ghcr.io/lucianoagenda/evo-crm-backend-traggi:<sha-do-backend>'   # mesmo SHA
+```
+
+Ao trocar a versão do backend, recrie os dois juntos (o Sidekiq só sobe depois que o
+`evocrm_crm` fica saudável, pois depende dele no compose):
+
+```bash
+docker compose pull evocrm_crm evocrm_crm_sidekiq
+docker compose up -d evocrm_crm evocrm_crm_sidekiq
+```
+
+O `evocrm_crm` roda as migrations ao iniciar e pode levar alguns minutos para ficar
+saudável.
+
+### Deploy completo (frontend + backend)
+
+Quando atualizar frontend e backend ao mesmo tempo:
+
+```bash
+docker compose pull evocrm_crm evocrm_crm_sidekiq evocrm_frontend
+docker compose up -d evocrm_crm evocrm_crm_sidekiq evocrm_frontend
+```
+
 ## Conferência rápida após o deploy
 
 - Abra outra tela do CRM (ex.: Pipelines), depois vá para **Conversas**: a lista e o
