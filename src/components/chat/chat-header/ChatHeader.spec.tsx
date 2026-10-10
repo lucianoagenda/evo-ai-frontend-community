@@ -54,6 +54,11 @@ vi.mock('@/components/chat/contact/ContactAvatar', () => ({
   default: () => <div data-testid="contact-avatar" />,
 }));
 
+// [Traggi]
+vi.mock('./TraggiPanel', () => ({
+  default: ({ conversationId }: { conversationId: string }) => <div data-testid="traggi-panel">{conversationId}</div>,
+}));
+
 const makePipeline = (
   id: string,
   stages: { id: string; name: string }[],
@@ -573,5 +578,14 @@ describe('ChatHeader mobile layout (EVO-2234)', () => {
 
     const shortStatus = screen.getByText('• open');
     expect(shortStatus).toHaveClass('md:hidden');
+  });
+});
+
+// [Traggi] A faixa do Traggi fica no header, visível sem abrir a barra lateral do contato.
+describe('ChatHeader — Traggi', () => {
+  it('renders the Traggi strip for the conversation next to the contact name', () => {
+    render(<ChatHeader {...defaultProps} />);
+
+    expect(screen.getByTestId('traggi-panel').textContent).toBe('42');
   });
 });

@@ -15,10 +15,6 @@ vi.mock('./ContactHeader', () => ({ default: () => null }));
 vi.mock('./ContactDetails', () => ({ default: () => null }));
 vi.mock('./EditableContactCustomAttributes', () => ({ default: () => null }));
 vi.mock('./EditableConversationCustomAttributes', () => ({ default: () => null }));
-// [Traggi]
-vi.mock('./TraggiPanel', () => ({
-  default: ({ conversationId }: { conversationId: string }) => <div data-testid="traggi-panel">{conversationId}</div>,
-}));
 type WithChildren = { children?: React.ReactNode; onClick?: () => void };
 vi.mock('@evoapi/design-system/button', () => ({ Button: ({ children, onClick }: WithChildren) => <button onClick={onClick}>{children}</button> }));
 vi.mock('@evoapi/design-system/card', () => ({
@@ -130,33 +126,5 @@ describe('ContactSidebar — drawer declutter (EVO-1782)', () => {
     expect(view.queryByText('contactSidebar.sections.conversationInfo.title')).toBeNull();
     // A kept section still renders
     expect(view.queryByText('contactSidebar.sections.contactDetails.title')).not.toBeNull();
-  });
-});
-
-// [Traggi] Painel do Traggi: só com a conversa aberta na barra lateral (não consulta o Traggi com ela fechada).
-describe('ContactSidebar — painel do Traggi', () => {
-  beforeEach(() => {
-    mockGetContact.mockReset();
-    mockGetContact.mockResolvedValue(makeContact('1'));
-  });
-
-  const conversation = { id: 42 } as unknown as React.ComponentProps<typeof ContactSidebar>['conversation'];
-
-  it('renders the Traggi panel for the open conversation', async () => {
-    let view!: ReturnType<typeof render>;
-    await act(async () => {
-      view = render(<ContactSidebar {...defaultProps} conversation={conversation} />);
-    });
-
-    expect(view.getByTestId('traggi-panel').textContent).toBe('42');
-  });
-
-  it('does not render it while the sidebar is closed', async () => {
-    let view!: ReturnType<typeof render>;
-    await act(async () => {
-      view = render(<ContactSidebar {...defaultProps} isOpen={false} conversation={conversation} />);
-    });
-
-    expect(view.queryByTestId('traggi-panel')).toBeNull();
   });
 });

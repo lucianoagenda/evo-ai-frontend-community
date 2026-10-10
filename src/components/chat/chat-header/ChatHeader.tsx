@@ -31,6 +31,8 @@ import ContactAvatar from '@/components/chat/contact/ContactAvatar';
 import { getStatusLabel } from '@/utils/chat/conversationStatus';
 import ConversationStatusButton from './ConversationStatusButton';
 import { STATUS_META, STATUS_META_LIGHT } from './statusMeta';
+// [Traggi] faixa do agente do Traggi (lead/cliente) ao lado do nome
+import TraggiPanel from './TraggiPanel';
 import { isPhoneBearingChannel } from '@/utils/channelUtils';
 import { formatContactPhone } from '@/utils/contact/formatContactPhone';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -466,6 +468,8 @@ const ChatHeader = ({
                   {phoneDisplay}
                 </span>
               )}
+              {/* [Traggi] situação e botões do Traggi, visíveis sem abrir a barra lateral */}
+              {conversation.id && <TraggiPanel conversationId={String(conversation.id)} />}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {/* min-w-0: a flex item's automatic minimum size is its content, so without

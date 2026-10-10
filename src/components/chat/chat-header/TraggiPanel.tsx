@@ -1,4 +1,4 @@
-// [Traggi] Painel do Traggi na barra lateral da conversa: situação do contato no
+// [Traggi] Faixa do Traggi no header da conversa, ao lado do nome: situação do contato no
 // agente do Traggi (lead ou cliente) e os botões devolver/reabrir/encerrar/opt-out,
 // com as mesmas regras das telas do Traggi. Some quando o Traggi não está
 // configurado, o número não está no agente ou a consulta falha.
@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '@evoapi/design-system/badge';
 import { Button } from '@evoapi/design-system/button';
-import { Card, CardContent, CardHeader } from '@evoapi/design-system/card';
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from '@evoapi/design-system/dialog';
 import { Label } from '@evoapi/design-system/label';
 import { Textarea } from '@evoapi/design-system/textarea';
@@ -89,63 +88,65 @@ export default function TraggiPanel({ conversationId }: TraggiPanelProps) {
     }
   };
 
+  const iaTexto = situacao.ia_respondendo ? t('traggiPanel.iaRespondendo') : t('traggiPanel.iaSilenciosa');
+  // Resumo e motivo ficam no tooltip do ícone: o header não tem espaço para texto longo.
+  const detalhes = [
+    `${t('traggiPanel.titulo')} — ${iaTexto}`,
+    situacao.motivo ? `${t('traggiPanel.motivo')}: ${situacao.motivo}` : null,
+    situacao.resumo,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <Bot className="h-4 w-4 text-violet-500" />
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold truncate">{t('traggiPanel.titulo')}</h3>
-            <p className="text-xs text-muted-foreground truncate">
-              {situacao.ia_respondendo ? t('traggiPanel.iaRespondendo') : t('traggiPanel.iaSilenciosa')}
-            </p>
-          </div>
-        </div>
-      </CardHeader>
+    <div className="flex flex-wrap items-center gap-1.5" data-testid="traggi-panel">
+      <span
+        className={`inline-flex items-center justify-center rounded-full p-1 ${
+          situacao.ia_respondendo ? 'bg-violet-100 text-violet-600 dark:bg-violet-500/20' : 'bg-muted text-muted-foreground'
+        }`}
+        title={detalhes}
+        aria-label={iaTexto}
+        data-testid="traggi-ia"
+      >
+        <Bot className="h-3.5 w-3.5" />
+      </span>
+      <Badge variant="secondary" className="h-6 text-xs">
+        {t(`traggiPanel.tipo.${tipo}`)}
+      </Badge>
+      <Badge variant="outline" className="h-6 text-xs">
+        {situacao.status_rotulo}
+      </Badge>
+      {situacao.opt_out && (
+        <Badge variant="destructive" className="h-6 text-xs">
+          {t('traggiPanel.optOut')}
+        </Badge>
+      )}
 
-      <CardContent className="pt-0 px-3 pb-3 space-y-2 text-sm">
-        <div className="flex flex-wrap items-center gap-1">
-          <Badge variant="secondary">{t(`traggiPanel.tipo.${tipo}`)}</Badge>
-          <Badge variant="outline">{situacao.status_rotulo}</Badge>
-          {situacao.opt_out && <Badge variant="destructive">{t('traggiPanel.optOut')}</Badge>}
-        </div>
+      {situacao.acoes?.map(a => (
+        <Button
+          key={a}
+          size="sm"
+          variant={VARIANTE[a]}
+          className="h-6 px-2 text-xs"
+          data-testid={`traggi-acao-${a}`}
+          onClick={() => abrir(a)}
+        >
+          {t(`traggiPanel.acoes.${a}`)}
+        </Button>
+      ))}
 
-        {situacao.motivo && (
-          <p className="text-xs">
-            <span className="text-muted-foreground">{t('traggiPanel.motivo')}: </span>
-            {situacao.motivo}
-          </p>
-        )}
-        {situacao.resumo && <p className="text-xs whitespace-pre-line">{situacao.resumo}</p>}
-
-        {(situacao.acoes?.length ?? 0) > 0 && (
-          <div className="flex flex-wrap gap-1 pt-1">
-            {situacao.acoes?.map(a => (
-              <Button
-                key={a}
-                size="sm"
-                variant={VARIANTE[a]}
-                data-testid={`traggi-acao-${a}`}
-                onClick={() => abrir(a)}
-              >
-                {t(`traggiPanel.acoes.${a}`)}
-              </Button>
-            ))}
-          </div>
-        )}
-
-        {situacao.link && (
-          <a
-            href={situacao.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-          >
-            {t('traggiPanel.abrirNoTraggi')}
-            <ExternalLink className="h-3 w-3" />
-          </a>
-        )}
-      </CardContent>
+      {situacao.link && (
+        <a
+          href={situacao.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={t('traggiPanel.abrirNoTraggi')}
+          aria-label={t('traggiPanel.abrirNoTraggi')}
+          className="inline-flex items-center text-primary hover:text-primary/80"
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+      )}
 
       <Dialog open={acao !== null} onOpenChange={aberto => !aberto && !salvando && setAcao(null)}>
         <DialogContent className="sm:max-w-md">
@@ -201,6 +202,6 @@ export default function TraggiPanel({ conversationId }: TraggiPanelProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }

@@ -79,8 +79,11 @@ describe('TraggiPanel', () => {
 
     expect(await screen.findByText('Com o time')).toBeInTheDocument();
     expect(screen.getByText('traggiPanel.tipo.lead')).toBeInTheDocument();
-    expect(screen.getByText('traggiPanel.iaSilenciosa')).toBeInTheDocument();
-    expect(screen.getByText('Quer demonstração.')).toBeInTheDocument();
+    // Status da IA, motivo e resumo ficam no tooltip do ícone (o header não tem espaço).
+    const ia = screen.getByTestId('traggi-ia');
+    expect(ia).toHaveAttribute('aria-label', 'traggiPanel.iaSilenciosa');
+    expect(ia.getAttribute('title')).toContain('Quer demonstração.');
+    expect(ia.getAttribute('title')).toContain('traggiPanel.motivo: quer demonstração');
     expect(screen.getByRole('link', { name: /traggiPanel.abrirNoTraggi/ })).toHaveAttribute('href', lead.link);
     expect(screen.queryByTestId('traggi-acao-devolver')).not.toBeInTheDocument();
     expect(screen.getByTestId('traggi-acao-encerrar')).toBeInTheDocument();
@@ -106,7 +109,7 @@ describe('TraggiPanel', () => {
       expect(executarTraggiAcao).toHaveBeenCalledWith('c1', { tipo: 'lead', id: 12, acao: 'devolver' }),
     );
     expect(await screen.findByText('Em conversa')).toBeInTheDocument();
-    expect(screen.getByText('traggiPanel.iaRespondendo')).toBeInTheDocument();
+    expect(screen.getByTestId('traggi-ia')).toHaveAttribute('aria-label', 'traggiPanel.iaRespondendo');
     expect(toast.success).toHaveBeenCalledWith('traggiPanel.sucesso.devolver');
   });
 
