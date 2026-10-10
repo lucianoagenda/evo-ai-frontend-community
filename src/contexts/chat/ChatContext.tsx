@@ -648,9 +648,12 @@ function useChatIntegration() {
   // Restore state from localStorage on mount
   useEffect(() => {
     const savedState = loadState();
-    if (savedState.activeFilters) {
-      filters.setFilters(savedState.activeFilters);
-    }
+    // activeFilters NÃO é restaurado aqui: a página de Conversas (Chat.tsx) já
+    // aplica no mount os filtros salvos (filtersStorage) via applyFilters, que é
+    // quem define activeFilters. Como os efeitos do filho rodam antes deste, o
+    // restore sobrescrevia o filtro recém-aplicado com um estado antigo: a lista
+    // vinha com um filtro e os chips/realtime ficavam com outro, até o usuário
+    // clicar em Arquivadas → Ativas (que reaplica activeFilters).
     if (savedState.quickFilterTab) {
       filters.setQuickFilter(savedState.quickFilterTab);
     }
