@@ -1069,5 +1069,53 @@
   "unreadBadge": {
     "ariaLabel_one": "{{count}} mensagem não lida",
     "ariaLabel_other": "{{count}} mensagens não lidas"
+  },
+  "traggiPanel": {
+    "titulo": "Traggi · IA de atendimento",
+    "iaRespondendo": "A IA está respondendo este número",
+    "iaSilenciosa": "A IA não está respondendo (com o time ou encerrado)",
+    "tipo": {
+      "lead": "Lead",
+      "cliente": "Cliente"
+    },
+    "optOut": "Opt-out",
+    "motivo": "Motivo",
+    "abrirNoTraggi": "Abrir no Traggi",
+    "acoes": {
+      "devolver": "Devolver à IA",
+      "reabrir": "Reabrir",
+      "encerrar": "Encerrar",
+      "opt_out": "Marcar opt-out"
+    },
+    "confirmar": {
+      "devolver": {
+        "lead": "A IA volta a responder este lead na próxima mensagem.",
+        "cliente": "O agente volta a responder este cliente na próxima mensagem."
+      },
+      "reabrir": {
+        "lead": "A conversa volta para a IA.",
+        "cliente": "A abordagem volta a ficar em conversa com o agente."
+      },
+      "encerrar": {
+        "lead": "Encerra o lead no Traggi. Se ele escrever de novo, a IA retoma a conversa.",
+        "cliente": "Encerra a abordagem no Traggi."
+      },
+      "opt_out": {
+        "lead": "A IA não responde mais este número.",
+        "cliente": "O agente não aborda nem responde mais este cliente."
+      }
+    },
+    "motivoCampo": "Motivo de não assinar (opcional)",
+    "semMotivo": "Sem motivo",
+    "observacao": "Observação (opcional)",
+    "cancelar": "Cancelar",
+    "confirmarBotao": "Confirmar",
+    "sucesso": {
+      "devolver": "Devolvido à IA.",
+      "reabrir": "Reaberto.",
+      "encerrar": "Encerrado no Traggi.",
+      "opt_out": "Marcado como opt-out."
+    },
+    "erro": "Não foi possível falar com o Traggi. Tente de novo."
   }
 }

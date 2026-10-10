@@ -12,6 +12,8 @@ import ContactHeader from './ContactHeader';
 import ContactDetails from './ContactDetails';
 
 import EditableConversationCustomAttributes from './EditableConversationCustomAttributes';
+// [Traggi] painel do agente do Traggi (lead/cliente)
+import TraggiPanel from './TraggiPanel';
 
 import { contactsService } from '@/services/contacts';
 import { Contact, Conversation } from '@/types/chat/api';
@@ -221,6 +223,9 @@ const ContactSidebar: React.FC<ContactSidebarProps> = ({
               />
             </CardContent>
           </Card>
+
+          {/* [Traggi] Situação no agente do Traggi e botões (some sem Traggi configurado) */}
+          {isOpen && conversation?.id && <TraggiPanel conversationId={String(conversation.id)} />}
 
           {/* 2. Conversation Custom Attributes - Atributos personalizados da conversa */}
           {conversation && (

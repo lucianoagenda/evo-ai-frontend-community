@@ -1066,5 +1066,53 @@
   "unreadBadge": {
     "ariaLabel_one": "{{count}} unread message",
     "ariaLabel_other": "{{count}} unread messages"
+  },
+  "traggiPanel": {
+    "titulo": "Traggi · AI assistant",
+    "iaRespondendo": "The AI is answering this number",
+    "iaSilenciosa": "The AI is not answering (with the team or closed)",
+    "tipo": {
+      "lead": "Lead",
+      "cliente": "Customer"
+    },
+    "optOut": "Opted out",
+    "motivo": "Reason",
+    "abrirNoTraggi": "Open in Traggi",
+    "acoes": {
+      "devolver": "Hand back to AI",
+      "reabrir": "Reopen",
+      "encerrar": "Close",
+      "opt_out": "Mark as opted out"
+    },
+    "confirmar": {
+      "devolver": {
+        "lead": "The AI will answer this lead again on the next message.",
+        "cliente": "The agent will answer this customer again on the next message."
+      },
+      "reabrir": {
+        "lead": "The conversation goes back to the AI.",
+        "cliente": "The outreach goes back to an open conversation with the agent."
+      },
+      "encerrar": {
+        "lead": "Closes the lead in Traggi. If they write again, the AI resumes the conversation.",
+        "cliente": "Closes the outreach in Traggi."
+      },
+      "opt_out": {
+        "lead": "The AI will no longer answer this number.",
+        "cliente": "The agent will no longer reach out to or answer this customer."
+      }
+    },
+    "motivoCampo": "Reason for not subscribing (optional)",
+    "semMotivo": "No reason",
+    "observacao": "Note (optional)",
+    "cancelar": "Cancel",
+    "confirmarBotao": "Confirm",
+    "sucesso": {
+      "devolver": "Handed back to the AI.",
+      "reabrir": "Reopened.",
+      "encerrar": "Closed in Traggi.",
+      "opt_out": "Marked as opted out."
+    },
+    "erro": "Could not reach Traggi. Please try again."
   }
 }
